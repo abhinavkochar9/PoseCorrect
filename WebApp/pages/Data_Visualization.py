@@ -131,7 +131,7 @@ def process_data(video_file_path, json_file_path, csv_file_path,
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
         # Create a 1:1 black background square
-        square_size = 500  # Define a uniform square size
+        square_size = 400  # Define a uniform square size
         background = np.zeros((square_size, square_size, 3), dtype=np.uint8)  # Create a black square
 
         # Resize the frame while maintaining aspect ratio
@@ -249,7 +249,7 @@ def process_data(video_file_path, json_file_path, csv_file_path,
 
 # Main Visualization Layout
 if video_file_path and json_file_path and csv_file_path:
-    col1, col_video, col2 = st.columns([1, 2, 1])
+    col1, col_video, col2 = st.columns([2, 1, 2])
     
     with col_video:
         video_placeholder = st.empty()
