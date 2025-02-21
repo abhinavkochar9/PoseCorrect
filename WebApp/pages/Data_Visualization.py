@@ -15,8 +15,8 @@ st.title("LymphFit Data Visualization")
 st.sidebar.header("Select Patient and Exercise")
 if os.path.exists(ROOT_DIR):
     patients = sorted(
-    [f for f in os.listdir(ROOT_DIR) if os.path.isdir(os.path.join(ROOT_DIR, f))]
-)
+        [f for f in os.listdir(ROOT_DIR) if os.path.isdir(os.path.join(ROOT_DIR, f))]
+    )
     selected_patient = st.sidebar.selectbox("Select Patient", options=patients)
 
     if selected_patient:
@@ -26,9 +26,18 @@ if os.path.exists(ROOT_DIR):
         exercise_dir = os.path.join(ROOT_DIR, selected_patient, selected_exercise)
 
         # Detect files
-        video_file_path = next((os.path.join(exercise_dir, f) for f in os.listdir(exercise_dir) if f.endswith(".mp4")), None)
-        json_file_path = next((os.path.join(exercise_dir, f) for f in os.listdir(exercise_dir) if f.endswith(".json")), None)
-        csv_file_path = next((os.path.join(exercise_dir, f) for f in os.listdir(exercise_dir) if f.endswith(".csv")), None)
+        video_file_path = next(
+            (os.path.join(exercise_dir, f) for f in os.listdir(exercise_dir) if f.endswith(".mp4")), 
+            None
+        )
+        json_file_path = next(
+            (os.path.join(exercise_dir, f) for f in os.listdir(exercise_dir) if f.endswith(".json")), 
+            None
+        )
+        csv_file_path = next(
+            (os.path.join(exercise_dir, f) for f in os.listdir(exercise_dir) if f.endswith(".csv")), 
+            None
+        )
 
         if not video_file_path:
             st.sidebar.error("No video file found")
@@ -70,8 +79,9 @@ def plot_emg_graph(x, y, title):
     return fig
 
 
-def process_data(video_file_path, json_file_path, csv_file_path, acc_placeholder, gyro_placeholder, emg_placeholders):
-     # Load JSON data
+def process_data(video_file_path, json_file_path, csv_file_path, 
+                 acc_placeholder, gyro_placeholder, emg_placeholders):
+    # Load JSON data
     with open(json_file_path, 'r') as f:
         data = json.load(f)
 
@@ -99,7 +109,7 @@ def process_data(video_file_path, json_file_path, csv_file_path, acc_placeholder
     sensor_timestamps = accelerometer_data.index
     normalized_sensor_timestamps = (sensor_timestamps / sensor_timestamps.max() * total_duration)
 
-    # Load video
+    # Load video (again, just to be consistent with current usage)
     cap = cv2.VideoCapture(video_file_path)
     video_fps = cap.get(cv2.CAP_PROP_FPS)
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -129,18 +139,15 @@ def process_data(video_file_path, json_file_path, csv_file_path, acc_placeholder
         scale = min(square_size / h, square_size / w)
         resized_frame = cv2.resize(frame, (int(w * scale), int(h * scale)))
 
-        # Convert the frame's color from BGR to RGB
-        #resized_frame_rgb = cv2.cvtColor(resized_frame, cv2.COLOR_BGR2RGB)
-        resized_frame_rgb = resized_frame
-
         # Center the resized frame on the black square
-        x_offset = (square_size - resized_frame_rgb.shape[1]) // 2
-        y_offset = (square_size - resized_frame_rgb.shape[0]) // 2
-        background[y_offset:y_offset + resized_frame_rgb.shape[0], x_offset:x_offset + resized_frame_rgb.shape[1]] = resized_frame_rgb
+        x_offset = (square_size - resized_frame.shape[1]) // 2
+        y_offset = (square_size - resized_frame.shape[0]) // 2
+        background[y_offset:y_offset + resized_frame.shape[0], x_offset:x_offset + resized_frame.shape[1]] = resized_frame
 
         # Display the centered video frame on the black square
         video_placeholder.image(background, use_container_width=True)
 
+        # -------------------------------------------------
         # Update Accelerometer graph
         current_time = frame_idx * duration_per_frame
         sensor_indices = (normalized_sensor_timestamps <= current_time)[:len(accelerometer_data)]
@@ -150,25 +157,31 @@ def process_data(video_file_path, json_file_path, csv_file_path, acc_placeholder
         acc_fig.add_trace(go.Scatter(y=acc_current_data["Acc_Y"], mode="lines", name="Acc_Y"))
         acc_fig.add_trace(go.Scatter(y=acc_current_data["Acc_Z"], mode="lines", name="Acc_Z"))
         acc_fig.update_layout(
-        title=dict(
-            text="Accerometer Data",
-            font=dict(size=10),  # Reduce title font size
-            x=0.5,  # Center align the title
-            xanchor="center"
-        ),
-        xaxis=dict(
-            title="Time",
-            tickfont=dict(size=8),  # Reduce x-axis tick font size
-        ),
-        yaxis=dict(
-            title="Acceleration",
-            tickfont=dict(size=8),  # Reduce y-axis tick font size
-        ),
-        height=200,  # Compact graph height
-        margin=dict(l=10, r=10, t=30, b=10)  # Compact margins
-    )
-        acc_placeholder.plotly_chart(acc_fig, use_container_width=True)
+            title=dict(
+                text="Accerometer Data",
+                font=dict(size=10),  # Reduce title font size
+                x=0.5,  # Center align the title
+                xanchor="center"
+            ),
+            xaxis=dict(
+                title="Time",
+                tickfont=dict(size=8),  # Reduce x-axis tick font size
+            ),
+            yaxis=dict(
+                title="Acceleration",
+                tickfont=dict(size=8),  # Reduce y-axis tick font size
+            ),
+            height=200,  # Compact graph height
+            margin=dict(l=10, r=10, t=30, b=10)  # Compact margins
+        )
+        # Unique key for each frame so Streamlit doesn't complain:
+        acc_placeholder.plotly_chart(
+            acc_fig, 
+            use_container_width=True, 
+            key=f"acc_frame_{frame_idx}"
+        )
 
+        # -------------------------------------------------
         # Update Gyroscope graph
         sensor_indices = (normalized_sensor_timestamps <= current_time)[:len(gyroscope_data)]
         gyro_current_data = gyroscope_data.loc[sensor_indices]
@@ -177,42 +190,56 @@ def process_data(video_file_path, json_file_path, csv_file_path, acc_placeholder
         gyro_fig.add_trace(go.Scatter(y=gyro_current_data["Gyro_Y"], mode="lines", name="Gyro_Y"))
         gyro_fig.add_trace(go.Scatter(y=gyro_current_data["Gyro_Z"], mode="lines", name="Gyro_Z"))
         gyro_fig.update_layout(
-        title=dict(
-            text="Gyroscope Data",
-            font=dict(size=10),  # Reduce title font size
-            x=0.5,  # Center align the title
-            xanchor="center"
-        ),
-        xaxis=dict(
-            title="Time",
-            tickfont=dict(size=8),  # Reduce x-axis title font size
-        ),
-        yaxis=dict(
-            title="Angular Velocity",
-            tickfont=dict(size=8),  # Reduce y-axis title font size
-        ),
-        height=200,  # Compact graph height
-        margin=dict(l=10, r=10, t=30, b=10)  # Compact margins
-    )
-        gyro_placeholder.plotly_chart(gyro_fig, use_container_width=True)
+            title=dict(
+                text="Gyroscope Data",
+                font=dict(size=10),
+                x=0.5,  # Center align the title
+                xanchor="center"
+            ),
+            xaxis=dict(
+                title="Time",
+                tickfont=dict(size=8),
+            ),
+            yaxis=dict(
+                title="Angular Velocity",
+                tickfont=dict(size=8),
+            ),
+            height=200,
+            margin=dict(l=10, r=10, t=30, b=10)
+        )
+        # Unique key for each frame:
+        gyro_placeholder.plotly_chart(
+            gyro_fig, 
+            use_container_width=True, 
+            key=f"gyro_frame_{frame_idx}"
+        )
 
-
+        # -------------------------------------------------
         # EMG Visualization
-        current_emg = emg_data.iloc[frame_idx]
+        # We plot up to the current frame_idx for each channel
         for ph, channel in zip(emg_placeholders["left"], affected_channels):
-            ph.plotly_chart(plot_emg_graph(
-                list(range(frame_idx)), 
-                emg_data[channel].iloc[:frame_idx], 
-                f"Affected Arm: {channel}"
-            ), use_container_width=True)
+            ph.plotly_chart(
+                plot_emg_graph(
+                    list(range(frame_idx)), 
+                    emg_data[channel].iloc[:frame_idx], 
+                    f"Affected Arm: {channel}"
+                ),
+                use_container_width=True,
+                key=f"emg_left_{channel}_{frame_idx}"
+            )
 
         for ph, channel in zip(emg_placeholders["right"], non_affected_channels):
-            ph.plotly_chart(plot_emg_graph(
-                list(range(frame_idx)), 
-                emg_data[channel].iloc[:frame_idx], 
-                f"Non-Affected Arm: {channel}"
-            ), use_container_width=True)
+            ph.plotly_chart(
+                plot_emg_graph(
+                    list(range(frame_idx)), 
+                    emg_data[channel].iloc[:frame_idx], 
+                    f"Non-Affected Arm: {channel}"
+                ),
+                use_container_width=True,
+                key=f"emg_right_{channel}_{frame_idx}"
+            )
 
+        # -------------------------------------------------
         time.sleep(1/video_fps)
         frame_idx += 1
         progress_bar.progress(frame_idx / total_frames)
@@ -222,7 +249,7 @@ def process_data(video_file_path, json_file_path, csv_file_path, acc_placeholder
 
 # Main Visualization Layout
 if video_file_path and json_file_path and csv_file_path:
-    col1, col_video, col2 = st.columns([2, 2, 2])
+    col1, col_video, col2 = st.columns([1, 2, 1])
     
     with col_video:
         video_placeholder = st.empty()
@@ -233,8 +260,6 @@ if video_file_path and json_file_path and csv_file_path:
         "left": [col1.empty() for _ in range(3)],
         "right": [col2.empty() for _ in range(3)],
     }
-
-
 
     if st.button("Start Visualization"):
         process_data(video_file_path, json_file_path, csv_file_path,
