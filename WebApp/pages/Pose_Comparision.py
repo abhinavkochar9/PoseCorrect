@@ -256,8 +256,8 @@ if st.session_state.get("analysis_triggered", False) and not st.session_state.ge
 
         video_placeholder_ref.image(frame_ref_rgb, caption=f"Reference (t={current_time_sec:.2f}s)", use_container_width=True)
         video_placeholder_user.image(frame_user_rgb, caption=f"Patient (t={current_time_sec:.2f}s)", use_container_width=True)
-        chart_placeholder_keypoints.plotly_chart(fig_keypoints, use_container_width=True)
-        chart_placeholder_average.plotly_chart(fig_average, use_container_width=True)
+        chart_placeholder_keypoints.plotly_chart(fig_keypoints, use_container_width=True, key=f"keypoints_{frame_idx}")
+        chart_placeholder_average.plotly_chart(fig_average, use_container_width=True, key=f"average_{frame_idx}")
 
         time.sleep(1.0 / playback_fps)
         frame_idx += 1
