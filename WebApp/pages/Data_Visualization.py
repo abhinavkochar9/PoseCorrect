@@ -139,7 +139,7 @@ def process_data(video_file_path, json_file_path, csv_file_path, acc_placeholder
         background[y_offset:y_offset + resized_frame_rgb.shape[0], x_offset:x_offset + resized_frame_rgb.shape[1]] = resized_frame_rgb
 
         # Display the centered video frame on the black square
-        video_placeholder.image(background, use_column_width=True)
+        video_placeholder.image(background, use_container_width=True)
 
         # Update Accelerometer graph
         current_time = frame_idx * duration_per_frame
