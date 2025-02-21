@@ -249,7 +249,7 @@ def process_data(video_file_path, json_file_path, csv_file_path,
 
 # Main Visualization Layout
 if video_file_path and json_file_path and csv_file_path:
-    col1, col_video, col2 = st.columns([2, 1, 2])
+    col1, col_video, col2 = st.columns([1, 1, 1])
     
     with col_video:
         video_placeholder = st.empty()
