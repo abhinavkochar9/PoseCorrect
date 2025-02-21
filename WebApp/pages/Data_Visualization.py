@@ -226,14 +226,15 @@ if video_file_path and json_file_path and csv_file_path:
     
     with col_video:
         video_placeholder = st.empty()
+        acc_placeholder = st.empty()
+        gyro_placeholder = st.empty()
 
     emg_placeholders = {
         "left": [col1.empty() for _ in range(3)],
         "right": [col2.empty() for _ in range(3)],
     }
 
-    acc_placeholder = st.empty()
-    gyro_placeholder = st.empty()
+
 
     if st.button("Start Visualization"):
         process_data(video_file_path, json_file_path, csv_file_path,
