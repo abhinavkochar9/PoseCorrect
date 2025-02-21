@@ -254,8 +254,8 @@ if st.session_state.get("analysis_triggered", False) and not st.session_state.ge
             start, end = interval
             fig_average.add_vrect(x0=start, x1=end, fillcolor="red", opacity=0.3, line_width=0, layer="below")
 
-        video_placeholder_ref.image(frame_ref_rgb, caption=f"Reference (t={current_time_sec:.2f}s)", use_column_width=True)
-        video_placeholder_user.image(frame_user_rgb, caption=f"Patient (t={current_time_sec:.2f}s)", use_column_width=True)
+        video_placeholder_ref.image(frame_ref_rgb, caption=f"Reference (t={current_time_sec:.2f}s)", use_container_width=True)
+        video_placeholder_user.image(frame_user_rgb, caption=f"Patient (t={current_time_sec:.2f}s)", use_container_width=True)
         chart_placeholder_keypoints.plotly_chart(fig_keypoints, use_container_width=True)
         chart_placeholder_average.plotly_chart(fig_average, use_container_width=True)
 
