@@ -8,7 +8,7 @@ import requests
 import json
 
 # ---------------- Gemini API Settings & Helper Functions ----------------
-#GEMINI_API_KEY = "AIzaSyCAxTziyQpvsKEjEBOmpiHyMTLd3wVITLc"  # Replace with your own key
+GEMINI_API_KEY = "AIzaSyCAxTziyQpvsKEjEBOmpiHyMTLd3wVITLc"  # Replace with your own key
 GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
 BUFFER_WINDOW = 2  # seconds
 
