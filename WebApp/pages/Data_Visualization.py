@@ -249,16 +249,34 @@ def process_data(video_file_path, json_file_path, csv_file_path,
 
 # Main Visualization Layout
 if video_file_path and json_file_path and csv_file_path:
-    col1, col_video, col2 = st.columns([1, 1, 1])
+    # --- Top row: 3 columns for EMG (left), Video, EMG (right)
+    col_emg_left, col_video, col_emg_right = st.columns(3)
     
+    # EMG (left) placeholders
+    with col_emg_left:
+        emg_placeholders_left = [st.empty() for _ in range(3)]
+    
+    # Video placeholder in the middle
     with col_video:
         video_placeholder = st.empty()
+
+    # EMG (right) placeholders
+    with col_emg_right:
+        emg_placeholders_right = [st.empty() for _ in range(3)]
+
+    # --- Bottom row: 2 columns for Accelerometer and Gyroscope
+    col_acc, col_gyro = st.columns(2)
+
+    with col_acc:
         acc_placeholder = st.empty()
+
+    with col_gyro:
         gyro_placeholder = st.empty()
 
+    # Dictionary to conveniently access the EMG placeholders
     emg_placeholders = {
-        "left": [col1.empty() for _ in range(3)],
-        "right": [col2.empty() for _ in range(3)],
+        "left": emg_placeholders_left,
+        "right": emg_placeholders_right
     }
 
     if st.button("Start Visualization"):
