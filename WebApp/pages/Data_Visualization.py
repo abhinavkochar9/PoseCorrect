@@ -204,7 +204,7 @@ def process_data(video_file_path, json_file_path, csv_file_path,
                 title="Angular Velocity",
                 tickfont=dict(size=8),
             ),
-            height=150,
+            height=200,
             margin=dict(l=10, r=10, t=30, b=10)
         )
         # Unique key for each frame:
