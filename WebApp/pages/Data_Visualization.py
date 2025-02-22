@@ -73,7 +73,7 @@ def plot_emg_graph(x, y, title):
         title=dict(text=title, font=dict(size=10)),
         xaxis=dict(title="Time (s)", tickfont=dict(size=8)),
         yaxis=dict(title="EMG (mV)", tickfont=dict(size=8)),
-        height=200,
+        height=150,
         margin=dict(l=30, r=30, t=40, b=30),
     )
     return fig
@@ -204,7 +204,7 @@ def process_data(video_file_path, json_file_path, csv_file_path,
                 title="Angular Velocity",
                 tickfont=dict(size=8),
             ),
-            height=200,
+            height=150,
             margin=dict(l=10, r=10, t=30, b=10)
         )
         # Unique key for each frame:
