@@ -24,6 +24,6 @@ if st.session_state.page == "Home":
     with col2:
         if st.button("Go to LymphFit Data Visualization"):
             st.switch_page("pages/Data_Visualization.py")
-    # with col3:
-    #     if st.button("Go to Real-Time Visualization"):
-    #         st.switch_page("pages/Real-Time_Visualization.py")
+    with col3:
+        if st.button("Go to Real-Time Visualization"):
+            st.switch_page("pages/Real-Time_Visualization.py")
