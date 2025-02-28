@@ -18,12 +18,12 @@ if st.session_state.page == "Home":
     
     st.write("### Explore LymphFit")
     col1, col2, col3 = st.columns(3)
-    with col1:
-        if st.button("Go to LymphFit Pose Comparison"):
-            st.switch_page("pages/Pose_Comparison.py")
-    with col2:
-        if st.button("Go to LymphFit Data Visualization"):
-            st.switch_page("pages/Data_Visualization.py")
+    # with col1:
+    #     if st.button("Go to LymphFit Pose Comparison"):
+    #         st.switch_page("pages/Pose_Comparison.py")
+    # with col2:
+    #     if st.button("Go to LymphFit Data Visualization"):
+    #         st.switch_page("pages/Data_Visualization.py")
     with col3:
         if st.button("Go to Real-Time Visualization"):
             st.switch_page("pages/Real-Time_Visualization.py")
